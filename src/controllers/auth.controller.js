@@ -44,9 +44,9 @@ class AuthController {
    */
   register = asyncHandler(async (req, res) => {
     // Validate request body
-    this.validateBody(this.registerSchema, req.body);
+    const validatedData = this.validateBody(this.registerSchema, req.body);
 
-    const user = await userService.registerUser (req.body);
+    const user = await userService.registerUser(validatedData);
     const accessToken = userService.generateAccessToken({
       userId: user._id,
       username: user.username,
@@ -96,10 +96,10 @@ class AuthController {
    */
   login = asyncHandler(async (req, res) => {
     // Validate request body
-    this.validateBody(this.loginSchema, req.body);
+    const validatedData = this.validateBody(this.loginSchema, req.body);
 
-    const { email, password } = req.body;
-    const { user } = await userService.loginUser (email, password);
+    const { email, password } = validatedData;
+    const { user } = await userService.loginUser(email, password);
 
     const accessToken = userService.generateAccessToken({
       userId: user._id,
@@ -152,7 +152,7 @@ class AuthController {
     if (!user) {
       return res
         .status(404)
-        .json({ success: false, message: 'User  not found' });
+        .json({ success: false, message: 'User not found' });
     }
     res.status(200).json({ success: true, data: user });
   });
@@ -281,9 +281,9 @@ class AuthController {
    */
   verifyEmail = asyncHandler(async (req, res) => {
     // Validate request body
-    this.validateBody(this.verifyEmailSchema, req.body);
+    const validatedData = this.validateBody(this.verifyEmailSchema, req.body);
 
-    const { email } = req.body;
+    const { email } = validatedData;
 
     // Generate verification token
     const verificationToken = await userService.generateVerificationToken({
